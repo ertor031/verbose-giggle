@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Главная</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<header class="top-menu">
+  <h1>GOLD TYR</h1>
+  <div></div>
+   <div id="clock"></div>
+</header>
+
+<body>
+  <div class="container">
+    <h1>Deposit 🎉🎉🎉</h1>
+    <p id="name-display">Загрузка...</p>
+     <img src="american-dollar-bills-removebg-preview.png" alt="Фото поверх фона" class="top-photo">
+  </div>
+
+    <div class="ticker-container">
+    <div class="ticker-track" id="ticker">
+      <!-- JS вставит сюда цены -->
+    </div>
+  </div>
+
+  <script>
+    function loadName() {
+      const name = localStorage.getItem("latestName");
+      const extraText = " 💵"; 
+      document.getElementById("name-display").textContent = name + extraText || "Имя пока не задано";
+    }
+    loadName();
+    setInterval(loadName, 3000);
+  </script>
+
+
+<script>
+const FINNHUB_KEY = "d3d57d9r01qmnfgg6r0gd3d57d9r01qmnfgg6r10";
+
+const stockTickers = ['AAPL','GOOGL','TSLA','MSFT','AMZN','NFLX'];
+const cryptoTickers = ['bitcoin','ethereum','ripple','dogecoin','litecoin','cardano'];
+
+function getRandom(arr) {
+  return arr[Math.floor(Math.random()*arr.length)];
+}
+
+async function getStockPrice(ticker) {
+  try {
+    const res = await fetch(`https://finnhub.io/api/v1/quote?symbol=${ticker}&token=${FINNHUB_KEY}`);
+    const data = await res.json();
+    if(data.c) return `${ticker}: $${data.c.toFixed(2)}`;
+    return `${ticker}: Нет данных`;
+  } catch(e) {
+    return `${ticker}: Ошибка`;
+  }
+}
+
+async function getCryptoPrice(id) {
+  try {
+    const res = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${id}&vs_currencies=usd`);
+    const data = await res.json();
+    if(data[id]) return `${id.toUpperCase()}: $${data[id].usd}`;
+    return `${id.toUpperCase()}: Нет данных`;
+  } catch(e) {
+    return `${id.toUpperCase()}: Ошибка`;
+  }
+}
+
+// Создаём массив элементов для ленты
+async function generateTickerItems(count = 20) {
+  const items = [];
+  for(let i = 0; i < count; i++) {
+    if(Math.random() < 0.5) {
+      const stock = getRandom(stockTickers);
+      items.push(await getStockPrice(stock));
+    } else {
+      const crypto = getRandom(cryptoTickers);
+      items.push(await getCryptoPrice(crypto));
+    }
+  }
+  return items;
+}
+
+async function startTicker() {
+  const ticker = document.getElementById("ticker");
+  const items = await generateTickerItems(30); // 30 элементов для беспрерывной ленты
+  ticker.innerHTML = items.map(item => `<span class="ticker-item">${item}</span>`).join("");
+}
+
+startTicker();
+</script>
+
+<script>
+// Функция обновления времени
+function updateClock() {
+  const now = new Date();
+  const hours = String(now.getHours()).padStart(2,'0');
+  const minutes = String(now.getMinutes()).padStart(2,'0');
+  const seconds = String(now.getSeconds()).padStart(2,'0');
+  document.getElementById('clock').textContent = `${hours}:${minutes}:${seconds}`;
+}
+setInterval(updateClock, 1000);
+updateClock();
+</script>
+
+
+</body>
+</html>
+
+

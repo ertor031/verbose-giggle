@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Админ панель</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Nastya 007</h1>
+    <input type="text" id="name-input" placeholder="Введите имя">
+    <button onclick="saveName()">Сохранить</button>
+    <p id="status"></p>
+  </div>
+
+  <script>
+    function saveName() {
+      const name = document.getElementById("name-input").value.trim();
+      if (name) {
+        localStorage.setItem("latestName", name);
+        document.getElementById("status").textContent = "Имя сохранено!";
+      } else {
+        document.getElementById("status").textContent = "Введите имя!";
+      }
+    }
+  </script>
+</body>
+</html>
