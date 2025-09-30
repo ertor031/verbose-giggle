@@ -4,21 +4,38 @@
   <meta charset="UTF-8">
   <title>Админ панель</title>
   <link rel="stylesheet" href="style.css">
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 </head>
 <body>
   <div class="container">
-    <h1>Nastya 007</h1>
+    <h1>Админ панель</h1>
     <input type="text" id="name-input" placeholder="Введите имя">
     <button onclick="saveName()">Сохранить</button>
     <p id="status"></p>
   </div>
 
   <script>
+    // 🔑 Вставь сюда свой Firebase конфиг
+      const firebaseConfig = {
+        apiKey: "AIzaSyByiF-7RJ1wDoqmdHqXHwwq4T9flMLZSwQ",
+        authDomain: "depos-a9432.firebaseapp.com",
+        projectId: "depos-a9432",
+        storageBucket: "depos-a9432.firebasestorage.app",
+        messagingSenderId: "1094522234099",
+        appId: "1:1094522234099:web:6f85cc37a92e9554430386",
+        measurementId: "G-SZ7XCJ44MB"
+      };
+      
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
     function saveName() {
       const name = document.getElementById("name-input").value.trim();
       if (name) {
-        localStorage.setItem("latestName", name);
-        document.getElementById("status").textContent = "Имя сохранено!";
+        db.ref("latestName").set(name)
+          .then(() => document.getElementById("status").textContent = "Имя сохранено!")
+          .catch(err => alert("Ошибка: " + err));
       } else {
         document.getElementById("status").textContent = "Введите имя!";
       }

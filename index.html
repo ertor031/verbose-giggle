@@ -2,37 +2,64 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>Главная</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Главная</title>\
+    <link rel="stylesheet" href="style.css">
+  <style>
+    #clock { position: fixed; top: 10px; right: 20px; font-size: 24px; background: rgba(255,255,255,0.7); color: #000; padding: 5px 10px; border-radius: 8px; }
+    canvas { position: fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:9999; }
+  </style>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 </head>
-
-<header class="top-menu">
-  <h1>GOLD TYR</h1>
-  <div></div>
-   <div id="clock"></div>
-</header>
-
 <body>
+  <header class="top-menu">
+    <h1>GOLD TYR</h1>
+    <div></div>
+    <div id="clock"></div>
+  </header>
+
   <div class="container">
     <h1>Deposit 🎉🎉🎉</h1>
     <p id="name-display">Загрузка...</p>
-     <img src="american-dollar-bills-removebg-preview.png" alt="Фото поверх фона" class="top-photo">
-  </div>
-
-    <div class="ticker-container">
-    <div class="ticker-track" id="ticker">
-      <!-- JS вставит сюда цены -->
-    </div>
+    <img src="american-dollar-bills-removebg-preview.png" alt="Фото" class="top-photo">
   </div>
 
   <script>
-    function loadName() {
-      const name = localStorage.getItem("latestName");
-      const extraText = " 💵"; 
-      document.getElementById("name-display").textContent = name + extraText || "Имя пока не задано";
+    // ----------------- Firebase -----------------
+    const firebaseConf = {
+      apiKey: "AIzaSyByiF-7RJ1wDoqmdHqXHwwq4T9flMLZSwQ",
+      authDomain: "depos-a9432.firebaseapp.com",
+      databaseURL: "https://depos-a9432-default-rtdb.firebaseio.com",
+      projectId: "depos-a9432",
+      storageBucket: "depos-a9432.appspot.com",
+      messagingSenderId: "1094522234099",
+      appId: "1:1094522234099:web:6f85cc37a92e9554430386"
+    };
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConf);
+    const db = firebase.database();
+    const nameDisplay = document.getElementById("name-display");
+    const music = document.getElementById("music");
+
+    db.ref("latestName").on("value", snapshot => {
+      const name = snapshot.val();
+      nameDisplay.textContent = (name || "Имя пока не задано") + " 💵";
+  
+    });
+
+    // ----------------- Часы -----------------
+    const clock = document.getElementById("clock");
+    function updateClock() {
+      const now = new Date();
+      const h = String(now.getHours()).padStart(2,'0');
+      const m = String(now.getMinutes()).padStart(2,'0');
+      const s = String(now.getSeconds()).padStart(2,'0');
+      clock.textContent = `${h}:${m}:${s}`;
     }
-    loadName();
-    setInterval(loadName, 3000);
+    setInterval(updateClock, 1000);
+    updateClock();
+
+
+
   </script>
 
 
@@ -91,22 +118,9 @@ async function startTicker() {
 
 startTicker();
 </script>
-
-<script>
-// Функция обновления времени
-function updateClock() {
-  const now = new Date();
-  const hours = String(now.getHours()).padStart(2,'0');
-  const minutes = String(now.getMinutes()).padStart(2,'0');
-  const seconds = String(now.getSeconds()).padStart(2,'0');
-  document.getElementById('clock').textContent = `${hours}:${minutes}:${seconds}`;
-}
-setInterval(updateClock, 1000);
-updateClock();
-</script>
-
-
 </body>
 </html>
+
+
 
 
